@@ -1,6 +1,8 @@
 #include "libft.h"
 #include <stdlib.h>
+#include <stdint.h>
 
+/* Reserve both strings and one terminator; check the sum before adding. */
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*joined;
@@ -11,7 +13,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		return (NULL);
 	first_length = ft_strlen(s1);
 	second_length = ft_strlen(s2);
-	if (first_length > (size_t)-1 - second_length - 1)
+	if (first_length > SIZE_MAX - second_length - 1)
 		return (NULL);
 	joined = malloc(first_length + second_length + 1);
 	if (joined == NULL)

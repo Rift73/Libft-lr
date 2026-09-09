@@ -1,6 +1,10 @@
 #include "libft.h"
 
-/* dstsize is the whole buffer capacity, not just its remaining space. */
+/*
+** dstsize is the whole capacity. Find the original end within that bound,
+** append while leaving one byte for the terminator, and return the length
+** we tried to create, not the number of characters actually appended.
+*/
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 {
 	size_t	destination_length;

@@ -1,7 +1,10 @@
 #include "libft.h"
 #include <stdlib.h>
 
-/* The caller owns this new allocation, not an alias of the input. */
+/*
+** The caller owns a separate allocation. Index length holds the terminator,
+** so the <= loop copies it along with all the visible characters.
+*/
 char	*ft_strdup(const char *s1)
 {
 	char	*duplicate;

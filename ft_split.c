@@ -1,23 +1,25 @@
 #include "libft.h"
 #include <stdlib.h>
+#include <stdint.h>
 
+/* Skip separators, count a word, then advance to the end of that word. */
 static size_t	ft_count_words(const char *s, char delimiter)
 {
-	size_t	count;
+	size_t	word_count;
 
-	count = 0;
+	word_count = 0;
 	while (*s != '\0')
 	{
-		while (*s == delimiter && *s != '\0')
+		while (*s != '\0' && *s == delimiter)
 			s++;
 		if (*s != '\0')
 		{
-			count++;
-			while (*s != delimiter && *s != '\0')
+			word_count++;
+			while (*s != '\0' && *s != delimiter)
 				s++;
 		}
 	}
-	return (count);
+	return (word_count);
 }
 
 /* Only the first count word pointers own completed allocations. */
@@ -44,42 +46,48 @@ static char	*ft_copy_word(const char *s, size_t length)
 	return (word);
 }
 
-static char	**ft_fill_words(const char *s, char c, char **words)
+/*
+** Locate a word, measure it, copy it, then advance past it. word_index counts
+** completed allocations, so cleanup never reads uninitialized pointers.
+** Each word ends in a zero character; the pointer array ends in NULL.
+*/
+static char	**ft_fill_words(const char *s, char delimiter, char **words)
 {
-	size_t	count;
-	size_t	length;
+	size_t	word_index;
+	size_t	word_length;
 
-	count = 0;
+	word_index = 0;
 	while (*s != '\0')
 	{
-		while (*s == c && *s != '\0')
+		while (*s != '\0' && *s == delimiter)
 			s++;
 		if (*s == '\0')
 			break ;
-		length = 0;
-		while (s[length] != '\0' && s[length] != c)
-			length++;
-		words[count] = ft_copy_word(s, length);
-		if (words[count] == NULL)
-			return (ft_free_words(words, count));
-		count++;
-		s += length;
+		word_length = 0;
+		while (s[word_length] != '\0' && s[word_length] != delimiter)
+			word_length++;
+		words[word_index] = ft_copy_word(s, word_length);
+		if (words[word_index] == NULL)
+			return (ft_free_words(words, word_index));
+		word_index++;
+		s += word_length;
 	}
-	words[count] = NULL;
+	words[word_index] = NULL;
 	return (words);
 }
 
+/* Count first, reserve one extra pointer for NULL, then build the words. */
 char	**ft_split(char const *s, char c)
 {
 	char	**words;
-	size_t	count;
+	size_t	word_count;
 
 	if (s == NULL)
 		return (NULL);
-	count = ft_count_words(s, c);
-	if (count > (size_t)-1 / sizeof(char *) - 1)
+	word_count = ft_count_words(s, c);
+	if (word_count > SIZE_MAX / sizeof(char *) - 1)
 		return (NULL);
-	words = malloc(sizeof(char *) * (count + 1));
+	words = malloc(sizeof(char *) * (word_count + 1));
 	if (words == NULL)
 		return (NULL);
 	return (ft_fill_words(s, c, words));

@@ -1,6 +1,7 @@
 #include "libft.h"
 
-static int	ft_right_overlap(const unsigned char *dst,
+/* Look for dst inside the unread source range, using pointer equality. */
+static int	ft_needs_backward_copy(const unsigned char *dst,
 		const unsigned char *src, size_t len)
 {
 	size_t	i;
@@ -25,7 +26,11 @@ static void	ft_copy_backward(unsigned char *dst,
 	}
 }
 
-/* Copy backward only when writing forward would destroy unread source bytes. */
+/*
+** Moving five bytes of "abcdef" one place right must give "aabcde".
+** A forward copy overwrites 'b' before reading it; copying backward avoids
+** this. When moving left or copying separate regions, forward copying works.
+*/
 void	*ft_memmove(void *dst, const void *src, size_t len)
 {
 	unsigned char		*destination;
@@ -37,7 +42,7 @@ void	*ft_memmove(void *dst, const void *src, size_t len)
 	destination = (unsigned char *)dst;
 	source = (const unsigned char *)src;
 	i = 0;
-	if (ft_right_overlap(destination, source, len))
+	if (ft_needs_backward_copy(destination, source, len))
 		ft_copy_backward(destination, source, len);
 	else
 	{

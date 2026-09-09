@@ -12,6 +12,11 @@ static int	ft_char_is_in_set(char c, const char *set)
 	return (0);
 }
 
+/*
+** Keep the interval [start, end): start is included and end is excluded.
+** Its length is end - start; the extra allocated byte holds the terminator.
+** The end > start guard also handles empty and completely trimmed strings.
+*/
 char	*ft_strtrim(char const *s1, char const *set)
 {
 	char	*trimmed;

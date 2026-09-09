@@ -1,7 +1,12 @@
 #include "libft.h"
 #include <stdlib.h>
+#include <stdint.h>
 
-/* Check multiplication before allocating; zero-size results stay freeable. */
+/*
+** SIZE_MAX is the largest byte count size_t can represent. Divide first to
+** check whether multiplication would wrap. A zero-size request uses one
+** allocated byte so the returned pointer can still be freed.
+*/
 void	*ft_calloc(size_t nmemb, size_t size)
 {
 	void	*memory;
@@ -11,7 +16,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 		total = 1;
 	else
 	{
-		if (nmemb > (size_t)(-1) / size)
+		if (nmemb > SIZE_MAX / size)
 			return (NULL);
 		total = nmemb * size;
 	}
