@@ -11,7 +11,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 		total = 1;
 	else
 	{
-		if (nmemb > (size_t)-1 / size)
+		if (nmemb > (size_t)(-1) / size)
 			return (NULL);
 		total = nmemb * size;
 	}
