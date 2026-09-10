@@ -36,7 +36,7 @@ static void check_pointer(const char *expected_description, const void *actual, 
 
 static void check_allocation(const void *actual)
 {
-    if (actual) printf("  %s Memory was allocated successfully.\n", result(1));
+    if (actual) printf("  %s Allocation succeeded.\n", result(1));
     else printf("  %s Allocation failed.\n    Expected: allocated memory\n    Got:      NULL (no memory)\n", result(0));
 }
 
@@ -136,7 +136,7 @@ static void check_split(const char *input, char delimiter, const char *expected[
     free(actual);
 }
 
-/* Each child gets its own memory and a timeout; one broken case cannot stop the rest. */
+/* Run each test in a separate process, with a 2-second timeout. */
 #define TEST(description, ...) do { \
     printf("\n%02d. %s\n", ++cases, description); fflush(stdout); \
     pid_t child = fork(); \
@@ -149,7 +149,7 @@ static void check_split(const char *input, char delimiter, const char *expected[
     if (child < 0 || waitpid(child, &status, 0) < 0) { perror("test runner"); return 1; } \
     if (WIFSIGNALED(status)) { \
         int signal_number = WTERMSIG(status); \
-        printf("  FAIL: %s; no normal result was returned. See expected behavior above.\n", \
+        printf("  [FAIL] %s. Expected result is shown in the test description.\n", \
             signal_number == SIGALRM ? "timed out after 2 seconds" : strsignal(signal_number)); \
         failed_cases++; \
     } else if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) { failed_cases++; } \
@@ -166,20 +166,20 @@ int main(int argc, char **argv)
     setvbuf(stdout, NULL, _IONBF, 0);
     if (argc == 2 && strcmp(argv[1], "--demo") == 0)
     {
-        puts("DEMO ONLY: illustrative PASS and FAIL messages.");
-        puts("These are not results from the linked library.\n");
+        puts("DEMO: example PASS and FAIL messages.");
+        puts("This mode does not test libft.a.\n");
         check_text("Correct copying", "aabcde", "aabcde");
         check_text("Incorrect copying", "abcdef", "aabcde");
         check_number("Incorrect return length", 4, 5);
         check_bytes("Missing string-ending zero byte", "heXX", "he\0X", 4);
         check_pointer("NULL (allocation rejected)", buffer, NULL);
-        puts("\nDemo finished. Library tests: ./test.out");
+        puts("\nEnd of demo. Run ./test.out to run the tests.");
         return 0;
     }
     if (argc != 1) { fprintf(stderr, "Usage: %s [--demo]\n", argv[0]); return 2; }
-    puts("LIBFT BOUNDARY CHECKS: results from the linked library.");
-    puts("PASS means a match; FAIL means a wrong result, a crash, or a timeout.");
-    puts("\\0 means a zero byte; X marks memory that must stay unchanged.");
+    puts("LIBFT TESTS");
+    puts("PASS = expected result. FAIL = wrong result, crash, or timeout.");
+    puts("\\0 is a zero byte. X marks bytes that should not change.");
 
     TEST("memmove: shifting right must turn \"abcdef\" into \"aabcde\"",
         strcpy(buffer, "abcdef");
@@ -280,8 +280,8 @@ int main(int argc, char **argv)
         check_number("Number read from the string", ft_atoi(" \t\n-2147483648xyz"), INT_MIN);
     );
     printf("\nSUMMARY: %d/%d cases passed; %d failed.\n", cases - failed_cases, cases, failed_cases);
-    if (!failed_cases) puts("No FAIL results: every result in these checks matched its expectation.");
-    puts("For failure-message examples, run ./test.out --demo.");
-    puts("These focused checks do not cover every Libft requirement.");
+    if (!failed_cases) puts("All checks passed.");
+    puts("Run ./test.out --demo to see examples of failed checks.");
+    puts("This checks common edge cases, not every Libft requirement.");
     return failed_cases != 0;
 }
