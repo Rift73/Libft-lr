@@ -166,18 +166,18 @@ int main(int argc, char **argv)
     setvbuf(stdout, NULL, _IONBF, 0);
     if (argc == 2 && strcmp(argv[1], "--demo") == 0)
     {
-        puts("DEMO ONLY: these made-up results explain PASS and FAIL.");
-        puts("They are NOT results from your Libft.\n");
+        puts("DEMO ONLY: illustrative PASS and FAIL messages.");
+        puts("These are not results from the linked library.\n");
         check_text("Correct copying", "aabcde", "aabcde");
         check_text("Incorrect copying", "abcdef", "aabcde");
         check_number("Incorrect return length", 4, 5);
         check_bytes("Missing string-ending zero byte", "heXX", "he\0X", 4);
         check_pointer("NULL (allocation rejected)", buffer, NULL);
-        puts("\nDemo finished. Run ./test.out for your real Libft results.");
+        puts("\nDemo finished. Library tests: ./test.out");
         return 0;
     }
     if (argc != 1) { fprintf(stderr, "Usage: %s [--demo]\n", argv[0]); return 2; }
-    puts("LIBFT BOUNDARY CHECKS: results from your compiled library.");
+    puts("LIBFT BOUNDARY CHECKS: results from the linked library.");
     puts("PASS means a match; FAIL means a wrong result, a crash, or a timeout.");
     puts("\\0 means a zero byte; X marks memory that must stay unchanged.");
 
